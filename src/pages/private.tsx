@@ -2,8 +2,6 @@ import { Link, Outlet } from "react-router";
 
 const Private = () => {
 
-  const storage = localStorage.getItem("token");
-
   return (
     <div className="h-full">
       <div className="px-5 py-3 bg-gray-800 text-white flex items-center justify-between">
