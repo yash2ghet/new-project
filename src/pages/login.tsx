@@ -57,6 +57,9 @@ const Login: React.FC = () => {
   const onSubmit = async (data: LoginFormValues) => {
     setLoading(true);
 
+    console.log(data.email);
+    console.log(data.password);
+
     setTimeout(() => {
     localStorage.setItem("token", "fake-jwt-token");
     setLoading(false);
