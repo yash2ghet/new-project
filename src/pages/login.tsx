@@ -122,7 +122,7 @@ const Login: React.FC = () => {
                   href="/forgot-password"
                   className="text-[11px] text-neutral-300 hover:underline"
                 >
-                  Forgot your password?
+                  Forgot password?
                 </a>
               </div>
 
