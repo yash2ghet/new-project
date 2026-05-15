@@ -5,7 +5,7 @@ const Private = () => {
 
   if (!token) {
     return (
-      <div className="flex h-screen items-center justify-center bg-[#08060d] px-4">
+      <div className="flex min-h-screen items-center justify-center bg-[#08060d] px-4">
         <div className="w-full max-w-md rounded-2xl border border-neutral-200 bg-white p-8 text-center shadow-2xl">
           <h1 
             className="mb-3 text-4xl font-bold"
@@ -30,7 +30,7 @@ const Private = () => {
   }
 
   return (
-    <div className="h-full">
+    <div className="min-h-screen">
       <div className="px-5 py-3 bg-gray-800 text-white flex items-center justify-between">
         <h1>My App</h1>
 
