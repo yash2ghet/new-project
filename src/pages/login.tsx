@@ -65,6 +65,30 @@ const Login: React.FC = () => {
     setLoading(false);
     navigate("/app/dashboard");
     }, 1500);
+
+    const {email, password} = data;
+
+    const loginUrl = "http://localhost:4000/api/v1/auth/login";
+
+    await fetch(loginUrl, {
+      method: "POST",
+      headers: {
+        "Content-type": "application/json",
+      },
+      body: JSON.stringify({ email, password }),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        console.log("Login successful:", data);
+      })
+      .catch((error) => {
+        console.error("Login failed:", error);
+      })
   };
 
   return (
@@ -95,7 +119,7 @@ const Login: React.FC = () => {
 
               <Input
                 id="email"
-                type="email"
+                type="text"
                 placeholder="m@example.com"
                 className={`h-9 rounded-md border-[#2d2d2d] bg-[#1a1a1a] text-sm focus:ring-1 focus:ring-neutral-500 ${
                   errors.email ? "border-red-500" : ""
