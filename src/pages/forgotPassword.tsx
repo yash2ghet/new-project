@@ -7,6 +7,7 @@ import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
+import { useNavigate } from "react-router";
 
 const forgotSchema = z.object({
   email: z.string().email("Enter a valid email"),
@@ -15,6 +16,7 @@ const forgotSchema = z.object({
 type ForgotFormValues = z.infer<typeof forgotSchema>;
 
 const ForgotPassword: React.FC = () => {
+  const navigate = useNavigate();
   const form = useForm<ForgotFormValues>({
     resolver: zodResolver(forgotSchema),
     defaultValues: { email: "" },
@@ -26,10 +28,35 @@ const ForgotPassword: React.FC = () => {
     formState: { errors },
   } = form;
 
-  const onSubmit = (data: ForgotFormValues) => {
-    console.log("Reset link sent to:", data.email);
-    alert("Reset link sent!");
-  };
+  const onSubmit = async (data: ForgotFormValues) => {
+  try {
+    const response = await fetch(
+      "http://localhost:4000/api/v1/auth/forgot-password",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      }
+    );
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error(result.message);
+    }
+
+    alert(result.message);
+
+    localStorage.setItem("resetEmail", data.email);
+
+    navigate("/otp-verification");
+
+  } catch (error) {
+    console.error(error);
+  }
+};
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-[#1a1a1a] px-4 font-sans">

@@ -25,7 +25,8 @@ import Spinner from "../components/ui/spinner";
 
 const signupSchema = z
   .object({
-    fullName: z.string().min(2, "Full name is required"),
+    firstName: z.string().min(2, "First name is required"),
+    lastName: z.string().min(2, "Last name is required"),
     email: z.string().email("Enter a valid email"),
     password: z.string().min(8, "Password must be at least 8 characters"),
     confirmPassword: z.string(),
@@ -51,7 +52,8 @@ const SignUp: React.FC = () => {
   const form = useForm<SignupFormValues>({
     resolver: zodResolver(signupSchema),
     defaultValues: {
-      fullName: "",
+      firstName: "",
+      lastName: "",
       email: "",
       password: "",
       confirmPassword: "",
@@ -66,23 +68,45 @@ const SignUp: React.FC = () => {
   } = form;
 
   const onSubmit = async (data: SignupFormValues) => {
-    setLoading(true);
+    try {
+      setLoading(true);
 
-    setTimeout(() => {
-    console.log("Account created:", data);
-    localStorage.setItem("token", "fake-jwt-token");
-    setLoading(false);
-    navigate("/app/dashboard");
-  }, 1500);
+      const response = await fetch(
+        "http://localhost:4000/api/v1/auth/signup",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            firstName: data.firstName,
+            lastName: data.lastName,
+            email: data.email,
+            password: data.password,
+          }),
+        }
+      );
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.message);
+      }
+
+      alert("Signup successful");
+
+      navigate("/login");
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-[#1a1a1a] px-4 font-sans">
-
       <Card className="w-full max-w-[400px] rounded-2xl border-none bg-[#111111] px-6 py-4 text-white shadow-2xl">
-
         <CardHeader className="space-y-1 pb-5 pt-2 text-center">
-
           <CardTitle className="text-2xl font-bold text-white">
             Create your account
           </CardTitle>
@@ -93,34 +117,65 @@ const SignUp: React.FC = () => {
         </CardHeader>
 
         <CardContent className="p-0">
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            className="space-y-4"
+          >
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1.5">
+                <Label
+                  htmlFor="firstName"
+                  className="text-xs font-medium text-white"
+                >
+                  First Name
+                </Label>
 
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+                <Input
+                  id="firstName"
+                  placeholder="John"
+                  className={`h-9 rounded-md border-[#2d2d2d] bg-[#1a1a1a] text-sm focus:ring-1 focus:ring-neutral-500 ${
+                    errors.firstName ? "border-red-500" : ""
+                  }`}
+                  {...register("firstName")}
+                />
 
-            <div className="space-y-1.5">
+                {errors.firstName && (
+                  <p className="text-[10px] text-red-500">
+                    {errors.firstName.message}
+                  </p>
+                )}
+              </div>
 
-              <Label htmlFor="fullName" className="text-xs font-medium text-white">
-                Full Name
-              </Label>
+              <div className="space-y-1.5">
+                <Label
+                  htmlFor="lastName"
+                  className="text-xs font-medium text-white"
+                >
+                  Last Name
+                </Label>
 
-              <Input
-                id="fullName"
-                placeholder=""
-                className={`h-9 rounded-md border-[#2d2d2d] bg-[#1a1a1a] text-sm focus:ring-1 focus:ring-neutral-500 ${
-                  errors.fullName ? "border-red-500" : ""
-                }`}
-                {...register("fullName")}
-              />
+                <Input
+                  id="lastName"
+                  placeholder="Doe"
+                  className={`h-9 rounded-md border-[#2d2d2d] bg-[#1a1a1a] text-sm focus:ring-1 focus:ring-neutral-500 ${
+                    errors.lastName ? "border-red-500" : ""
+                  }`}
+                  {...register("lastName")}
+                />
 
-              {errors.fullName && (
-                <p className="text-[10px] text-red-500">
-                  {errors.fullName.message}
-                </p>
-              )}
+                {errors.lastName && (
+                  <p className="text-[10px] text-red-500">
+                    {errors.lastName.message}
+                  </p>
+                )}
+              </div>
             </div>
 
             <div className="space-y-1.5">
-
-              <Label htmlFor="email" className="text-xs font-medium text-white">
+              <Label
+                htmlFor="email"
+                className="text-xs font-medium text-white"
+              >
                 Email
               </Label>
 
@@ -142,9 +197,11 @@ const SignUp: React.FC = () => {
             </div>
 
             <div className="space-y-1.5">
-
               <div className="flex items-center justify-between">
-                <Label htmlFor="password" className="text-xs font-medium text-white">
+                <Label
+                  htmlFor="password"
+                  className="text-xs font-medium text-white"
+                >
                   Password
                 </Label>
 
@@ -157,7 +214,6 @@ const SignUp: React.FC = () => {
               </div>
 
               <div className="relative">
-
                 <Input
                   id="password"
                   type={showPassword ? "text" : "password"}
@@ -178,23 +234,27 @@ const SignUp: React.FC = () => {
                     <EyeOff className="h-4 w-4" />
                   )}
                 </button>
-
               </div>
             </div>
 
             <div className="space-y-1.5">
-
-              <Label htmlFor="confirmPassword" className="text-xs font-medium text-white">
+              <Label
+                htmlFor="confirmPassword"
+                className="text-xs font-medium text-white"
+              >
                 Confirm Password
               </Label>
 
               <div className="relative">
-
                 <Input
                   id="confirmPassword"
-                  type={showConfirmPassword ? "text" : "password"}
+                  type={
+                    showConfirmPassword ? "text" : "password"
+                  }
                   className={`h-9 pr-10 rounded-md border-[#2d2d2d] bg-[#1a1a1a] text-sm focus:ring-1 focus:ring-neutral-500 ${
-                    errors.confirmPassword ? "border-red-500" : ""
+                    errors.confirmPassword
+                      ? "border-red-500"
+                      : ""
                   }`}
                   {...register("confirmPassword")}
                 />
@@ -202,7 +262,9 @@ const SignUp: React.FC = () => {
                 <button
                   type="button"
                   onClick={() =>
-                    setShowConfirmPassword(!showConfirmPassword)
+                    setShowConfirmPassword(
+                      !showConfirmPassword
+                    )
                   }
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-white"
                 >
@@ -212,12 +274,10 @@ const SignUp: React.FC = () => {
                     <EyeOff className="h-4 w-4" />
                   )}
                 </button>
-
               </div>
             </div>
 
             <div className="min-h-[20px]">
-
               {errors.confirmPassword ? (
                 <p className="text-[11px] font-medium text-red-500">
                   {errors.confirmPassword.message}
@@ -231,7 +291,6 @@ const SignUp: React.FC = () => {
                   Must be at least 8 characters long.
                 </p>
               )}
-
             </div>
 
             <div className="flex items-center gap-2">
@@ -242,7 +301,10 @@ const SignUp: React.FC = () => {
                 className="h-4 w-4 accent-white"
               />
 
-              <label htmlFor="terms" className="text-xs text-neutral-400">
+              <label
+                htmlFor="terms"
+                className="text-xs text-neutral-400"
+              >
                 I accept all terms & conditions
               </label>
             </div>
@@ -258,13 +320,15 @@ const SignUp: React.FC = () => {
               className="mt-2 h-10 w-full rounded-md bg-[#f0f0f0] text-sm font-bold text-black hover:bg-white"
               disabled={loading}
             >
-              {loading ? <Spinner className="size-3" /> : "Create Account"}
+              {loading ? (
+                <Spinner className="size-3" />
+              ) : (
+                "Create Account"
+              )}
             </Button>
-
           </form>
 
           <div className="mt-6 text-center">
-
             <p className="text-xs text-neutral-400">
               Already have an account?{" "}
               <a
@@ -275,9 +339,7 @@ const SignUp: React.FC = () => {
                 Sign in
               </a>
             </p>
-
           </div>
-
         </CardContent>
       </Card>
     </div>

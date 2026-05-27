@@ -1,64 +1,69 @@
-import { Link, Outlet } from "react-router";
+import { Outlet, Navigate } from "react-router";
+import {
+  SidebarProvider,
+  SidebarInset,
+  SidebarTrigger,
+} from "../components/ui/sidebar";
+
+import { AppSidebar } from "../components/app-sidebar";
+import { Separator } from "../components/ui/separator";
+import { SessionProvider } from "../components/session-provider";
 
 const Private = () => {
-  const token = localStorage.getItem("token");
 
+  // CHECK TOKEN
+  const token = localStorage.getItem("authToken");
+
+  // IF NO TOKEN → REDIRECT TO LOGIN
   if (!token) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-[#08060d] px-4">
-        <div className="w-full max-w-md rounded-2xl border border-neutral-200 bg-white p-8 text-center shadow-2xl">
-          <h1 
-            className="mb-3 text-4xl font-bold"
-            style={{ color: "#111111", opacity: 1 }}
-            >
-            Unauthorized
-          </h1>
-
-          <p className="mb-6 text-sm text-gray-600">
-            You need to log in to access this page.
-          </p>
-
-          <a
-            href="/login"
-            className="inline-flex mt-2 rounded-lg bg-gray-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-gray-500"
-          >
-            Go to Login
-          </a>
-        </div>
-      </div>
-    );
+    return <Navigate to="/login" replace />;
   }
 
   return (
-    <div className="min-h-screen">
-      <div className="px-5 py-3 bg-gray-800 text-white flex items-center justify-between">
-        <h1>My App</h1>
+    <SessionProvider>
 
-        <div className="flex gap-3 items-center">
-          <Link className="hover:underline" to="/app/dashboard">
-            Home
-          </Link>
+      <SidebarProvider>
 
-          <Link className="hover:underline" to="/app/settings">
-            Settings
-          </Link>
+        <AppSidebar />
 
-          <Link className="hover:underline" to="/app/profile">
-            Profile
-          </Link>
+        <SidebarInset>
 
-          <Link
-            className="hover:underline"
-            to="/login"
-            onClick={() => localStorage.removeItem("token")}
-          >
-            Logout
-          </Link>
-        </div>
-      </div>
+          <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4 justify-between">
 
-      <Outlet />
-    </div>
+            <div className="flex items-center gap-2">
+
+              <SidebarTrigger className="-ml-1" />
+
+              <Separator orientation="vertical" className="mr-2 h-4" />
+
+              <div className="flex items-center gap-2">
+
+                <span className="text-sm font-medium text-muted-foreground">
+                  Build Your Application
+                </span>
+
+                <span className="text-sm font-medium text-muted-foreground">
+                  /
+                </span>
+
+                <span className="text-sm font-medium">
+                  Dashboard
+                </span>
+
+              </div>
+            </div>
+
+          </header>
+
+          <div className="flex flex-1 flex-col gap-4 p-4">
+            <Outlet />
+          </div>
+
+        </SidebarInset>
+
+      </SidebarProvider>
+
+    </SessionProvider>
   );
 };
 

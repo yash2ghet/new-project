@@ -1,11 +1,15 @@
-import React from "react";
-
-const Dashboard: React.FC = () => {
+export default function Dashboard() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[#1a1a1a] text-white text-2xl font-semibold">
+    <>
+      {/* Top 3 grid rows */}
+      <div className="grid auto-rows-min gap-4 md:grid-cols-3">
+        <div className="aspect-video rounded-xl bg-muted/50" />
+        <div className="aspect-video rounded-xl bg-muted/50" />
+        <div className="aspect-video rounded-xl bg-muted/50" />
+      </div>
       
-    </div>
+      {/* Large bottom placeholder area */}
+      <div className="min-h-[100vh] flex-1 rounded-xl bg-muted/50 md:min-h-min" />
+    </>
   );
-};
-
-export default Dashboard; 
+}

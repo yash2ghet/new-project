@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useNavigate } from "react-router";
+import { Navigate, useNavigate } from "react-router";
 
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
@@ -29,6 +29,12 @@ const ResetPassword: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  const email = localStorage.getItem("resetEmail");
+
+  if (!email) {
+    return <Navigate to="/forgot-password" replace />;
+  }
 
   const form = useForm<ResetFormValues>({
     resolver: zodResolver(resetSchema),

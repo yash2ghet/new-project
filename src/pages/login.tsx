@@ -55,41 +55,42 @@ const Login: React.FC = () => {
   } = form;
 
   const onSubmit = async (data: LoginFormValues) => {
-    setLoading(true);
+  setLoading(true);
 
-    console.log(data.email);
-    console.log(data.password);
+  const { email, password } = data;
 
-    setTimeout(() => {
-    localStorage.setItem("token", "fake-jwt-token");
-    setLoading(false);
-    navigate("/app/dashboard");
-    }, 1500);
+  const loginUrl = "http://localhost:4000/api/v1/auth/login";
 
-    const {email, password} = data;
+  await fetch(loginUrl, {
+    method: "POST",
+    headers: {
+      "Content-type": "application/json",
+    },
+    body: JSON.stringify({ email, password }),
+  })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
 
-    const loginUrl = "http://localhost:4000/api/v1/auth/login";
-
-    await fetch(loginUrl, {
-      method: "POST",
-      headers: {
-        "Content-type": "application/json",
-      },
-      body: JSON.stringify({ email, password }),
+      return response.json();
     })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        return response.json();
-      })
-      .then((data) => {
-        console.log("Login successful:", data);
-      })
-      .catch((error) => {
-        console.error("Login failed:", error);
-      })
-  };
+    .then((data) => {
+      console.log("Login successful:", data);
+
+      const token = data.token;
+
+      localStorage.setItem("authToken", token);
+
+      navigate("/app/dashboard");
+    })
+    .catch((error) => {
+      console.error("Login failed:", error);
+    })
+    .finally(() => {
+      setLoading(false);
+    });
+};
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-[#1a1a1a] px-4 font-sans">
