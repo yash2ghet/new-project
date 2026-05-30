@@ -90,7 +90,17 @@ const SignUp: React.FC = () => {
       const result = await response.json();
 
       if (!response.ok) {
-        throw new Error(result.message);
+
+        if (
+          result.message?.toLowerCase().includes("already") ||
+          result.message?.toLowerCase().includes("exists")
+        ) {
+          alert("Account already exists with this email");
+        } else {
+          alert(result.message || "Signup failed");
+        }
+
+        return;
       }
 
       alert("Signup successful");
@@ -105,8 +115,8 @@ const SignUp: React.FC = () => {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-[#1a1a1a] px-4 font-sans">
-      <Card className="w-full max-w-[400px] rounded-2xl border-none bg-[#111111] px-6 py-4 text-white shadow-2xl">
-        <CardHeader className="space-y-1 pb-5 pt-2 text-center">
+      <Card className="w-full max-w-[380px] rounded-2xl border-none bg-[#111111] px-6 py-4 text-white shadow-2xl">
+        <CardHeader className="space-y-0.5 pb-3 pt-1 text-center">
           <CardTitle className="text-2xl font-bold text-white">
             Create your account
           </CardTitle>
@@ -119,57 +129,60 @@ const SignUp: React.FC = () => {
         <CardContent className="p-0">
           <form
             onSubmit={handleSubmit(onSubmit)}
-            className="space-y-4"
+            className="space-y-3"
           >
-            <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-1.5">
-                <Label
-                  htmlFor="firstName"
-                  className="text-xs font-medium text-white"
-                >
-                  First Name
-                </Label>
+          <div className="space-y-3">
 
-                <Input
-                  id="firstName"
-                  placeholder="John"
-                  className={`h-9 rounded-md border-[#2d2d2d] bg-[#1a1a1a] text-sm focus:ring-1 focus:ring-neutral-500 ${
-                    errors.firstName ? "border-red-500" : ""
-                  }`}
-                  {...register("firstName")}
-                />
+            {/* FIRST NAME */}
+            <div className="space-y-1.5">
+              <Label
+                htmlFor="firstName"
+                className="text-xs font-medium text-white"
+              >
+                First Name
+              </Label>
 
-                {errors.firstName && (
-                  <p className="text-[10px] text-red-500">
-                    {errors.firstName.message}
-                  </p>
-                )}
-              </div>
+              <Input
+                id="firstName"
+                placeholder="John"
+                className={`h-8 rounded-md border-[#2d2d2d] bg-[#1a1a1a] text-sm focus:ring-1 focus:ring-neutral-500 ${
+                  errors.firstName ? "border-red-500" : ""
+                }`}
+                {...register("firstName")}
+              />
 
-              <div className="space-y-1.5">
-                <Label
-                  htmlFor="lastName"
-                  className="text-xs font-medium text-white"
-                >
-                  Last Name
-                </Label>
-
-                <Input
-                  id="lastName"
-                  placeholder="Doe"
-                  className={`h-9 rounded-md border-[#2d2d2d] bg-[#1a1a1a] text-sm focus:ring-1 focus:ring-neutral-500 ${
-                    errors.lastName ? "border-red-500" : ""
-                  }`}
-                  {...register("lastName")}
-                />
-
-                {errors.lastName && (
-                  <p className="text-[10px] text-red-500">
-                    {errors.lastName.message}
-                  </p>
-                )}
-              </div>
+              {errors.firstName && (
+                <p className="text-[10px] text-red-500">
+                  {errors.firstName.message}
+                </p>
+              )}
             </div>
+
+            {/* LAST NAME */}
+            <div className="space-y-1.5">
+              <Label
+                htmlFor="lastName"
+                className="text-xs font-medium text-white"
+              >
+                Last Name
+              </Label>
+
+              <Input
+                id="lastName"
+                placeholder="Doe"
+                className={`h-8 rounded-md border-[#2d2d2d] bg-[#1a1a1a] text-sm focus:ring-1 focus:ring-neutral-500 ${
+                  errors.lastName ? "border-red-500" : ""
+                }`}
+                {...register("lastName")}
+              />
+
+              {errors.lastName && (
+                <p className="text-[10px] text-red-500">
+                  {errors.lastName.message}
+                </p>
+              )}
+            </div>
+          </div>
 
             <div className="space-y-1.5">
               <Label
@@ -183,7 +196,7 @@ const SignUp: React.FC = () => {
                 id="email"
                 type="email"
                 placeholder="m@example.com"
-                className={`h-9 rounded-md border-[#2d2d2d] bg-[#1a1a1a] text-sm focus:ring-1 focus:ring-neutral-500 ${
+                className={`h-8 rounded-md border-[#2d2d2d] bg-[#1a1a1a] text-sm focus:ring-1 focus:ring-neutral-500 ${
                   errors.email ? "border-red-500" : ""
                 }`}
                 {...register("email")}
@@ -217,7 +230,7 @@ const SignUp: React.FC = () => {
                 <Input
                   id="password"
                   type={showPassword ? "text" : "password"}
-                  className={`h-9 pr-10 rounded-md border-[#2d2d2d] bg-[#1a1a1a] text-sm focus:ring-1 focus:ring-neutral-500 ${
+                  className={`h-8 pr-10 rounded-md border-[#2d2d2d] bg-[#1a1a1a] text-sm focus:ring-1 focus:ring-neutral-500 ${
                     errors.password ? "border-red-500" : ""
                   }`}
                   {...register("password")}
@@ -251,7 +264,7 @@ const SignUp: React.FC = () => {
                   type={
                     showConfirmPassword ? "text" : "password"
                   }
-                  className={`h-9 pr-10 rounded-md border-[#2d2d2d] bg-[#1a1a1a] text-sm focus:ring-1 focus:ring-neutral-500 ${
+                  className={`h-8 pr-10 rounded-md border-[#2d2d2d] bg-[#1a1a1a] text-sm focus:ring-1 focus:ring-neutral-500 ${
                     errors.confirmPassword
                       ? "border-red-500"
                       : ""

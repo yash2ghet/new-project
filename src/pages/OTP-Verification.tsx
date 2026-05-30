@@ -9,7 +9,12 @@ import {
   CardTitle,
 } from "../components/ui/card";
 
-import { Input } from "../components/ui/input";
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSeparator,
+  InputOTPSlot,
+} from "../components/ui/input-otp";
 import { Label } from "../components/ui/label";
 
 import { Navigate, useNavigate } from "react-router";
@@ -96,14 +101,44 @@ const OtpVerify: React.FC = () => {
                 OTP
               </Label>
 
-              <Input
-                type="text"
+              <InputOTP
                 maxLength={6}
-                placeholder="Enter OTP"
                 value={otp}
-                onChange={(e) => setOtp(e.target.value)}
-                className="h-9 rounded-md border-[#2d2d2d] bg-[#1a1a1a] text-sm text-white focus:ring-1 focus:ring-neutral-500"
-              />
+                onChange={setOtp}
+                className="w-full justify-center"
+              >
+                <InputOTPGroup>
+                  <InputOTPSlot
+                    index={0}
+                    className="bg-[#1a1a1a] border-[#2d2d2d] text-white focus-visible:ring-2 focus-visible:ring-white h-11 w-11 text-lg"
+                  />
+                  <InputOTPSlot
+                    index={1}
+                    className="bg-[#1a1a1a] border-[#2d2d2d] text-white focus-visible:ring-2 focus-visible:ring-white h-11 w-11 text-lg"
+                  />
+                  <InputOTPSlot
+                    index={2}
+                    className="bg-[#1a1a1a] border-[#2d2d2d] text-white focus-visible:ring-2 focus-visible:ring-white h-11 w-11 text-lg"
+                  />
+                </InputOTPGroup>
+
+                <InputOTPSeparator className="mx-1"/>
+
+                <InputOTPGroup>
+                  <InputOTPSlot
+                    index={3}
+                    className="bg-[#1a1a1a] border-[#2d2d2d] text-white focus-visible:ring-2 focus-visible:ring-white h-11 w-11 text-lg"
+                  />
+                  <InputOTPSlot
+                    index={4}
+                    className="bg-[#1a1a1a] border-[#2d2d2d] text-white focus-visible:ring-2 focus-visible:ring-white h-11 w-11 text-lg"
+                  />
+                  <InputOTPSlot
+                    index={5}
+                    className="bg-[#1a1a1a] border-[#2d2d2d] text-white focus-visible:ring-2 focus-visible:ring-white h-11 w-11 text-lg"
+                  />
+                </InputOTPGroup>
+              </InputOTP>
 
             </div>
 

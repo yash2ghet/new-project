@@ -8,6 +8,7 @@ import Profile from "./pages/profile";
 import ForgotPassword from "./pages/forgotPassword";
 import ResetPassword from "./pages/resetPassword";
 import OtpVerify from "./pages/OTP-Verification";
+import UserManagement from "./pages/userManagement";
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="settings" element={<Settings />} />
           <Route path="profile" element={<Profile />} />
+          <Route path="users" element={<UserManagement />} />
         </Route>
 
         <Route path="*" element={<Navigate to="/login" replace />} />

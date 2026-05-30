@@ -66,10 +66,7 @@ export function NavUser({
   const { session } = useSession()
 
   const accronym = session
-    ? getAccronym(
-        session.firstName as string,
-        session.lastName as string
-      )
+    ? getAccronym(`${session.firstName} ${session.lastName}`)
     : ""
 
   const [showLogoutDialog, setShowLogoutDialog] = useState(false);

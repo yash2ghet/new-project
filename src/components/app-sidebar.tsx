@@ -25,7 +25,8 @@ import {
   Settings2Icon,
   FrameIcon,
   PieChartIcon,
-  MapIcon
+  MapIcon,
+  UsersIcon
 } from "lucide-react";
 
 import { useSession } from "./session-provider";
@@ -141,6 +142,11 @@ const data = {
   ],
 
   projects: [
+    {
+      name: "User Management",
+      url: "/app/users",
+      icon: <UsersIcon />,
+    },
     {
       name: "Design Engineering",
       url: "#",
