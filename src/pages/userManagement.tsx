@@ -31,6 +31,11 @@ export default function UserManagementPage() {
   const [deleteOpen, setDeleteOpen] = React.useState(false)
   const [selectedUser, setSelectedUser] = React.useState<User | null>(null)
 
+  const [page, setPage] = React.useState(1)
+  const [pageSize, setPageSize] = React.useState(5)
+  const [totalPages, setTotalPages] = React.useState(1)
+  const [totalUsers, setTotalUsers] = React.useState(0)
+
   const columns = React.useMemo(
     () =>
       getUserColumns(
@@ -52,15 +57,21 @@ export default function UserManagementPage() {
     try {
       const token = localStorage.getItem("authToken")
 
-      const res = await fetch(API_URL, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      })
+      const res = await fetch(
+        `${API_URL}?page=${page}&limit=${pageSize}&search=${globalFilter}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      )
 
       const json = await res.json()
+
+      setTotalPages(json.totalPages || 1)
+      setTotalUsers(json.total || 0)
 
       console.log("API RESPONSE:", json)
 
@@ -92,7 +103,7 @@ export default function UserManagementPage() {
 
   React.useEffect(() => {
     fetchUsers()
-  }, [])
+  }, [page, pageSize, globalFilter])
 
   const handleSave = async (user: User) => {
     try {
@@ -248,6 +259,12 @@ export default function UserManagementPage() {
             data={data}
             globalFilter={globalFilter}
             setGlobalFilter={setGlobalFilter}
+            page={page}
+            setPage={setPage}
+            totalPages={totalPages}
+            totalUsers={totalUsers}
+            setPageSize={setPageSize}
+            pageSize={pageSize}
           />
 
           <UserDialog

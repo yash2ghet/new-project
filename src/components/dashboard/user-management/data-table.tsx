@@ -52,6 +52,15 @@ interface DataTableProps<TData, TValue> {
   data: TData[]
   globalFilter: string
   setGlobalFilter: (value: string) => void
+
+  page: number
+  setPage: React.Dispatch<React.SetStateAction<number>>
+
+  totalUsers: number
+  pageSize: number
+  setPageSize: React.Dispatch<React.SetStateAction<number>>
+
+  totalPages: number
 }
 
 export function DataTable<TData, TValue>({
@@ -59,6 +68,12 @@ export function DataTable<TData, TValue>({
   data,
   globalFilter,
   setGlobalFilter,
+  page,
+  setPage,
+  pageSize,
+  setPageSize,
+  totalUsers,
+  totalPages,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnVisibility, setColumnVisibility] =
@@ -71,15 +86,15 @@ export function DataTable<TData, TValue>({
     columns,
 
     getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
+    // getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
 
-    initialState: {
-      pagination: {
-        pageSize: 5,
-      },
-    },
+    // initialState: {
+    //   pagination: {
+    //     pageSize: 5,
+    //   },
+    // },
 
     onSortingChange: setSorting,
     onColumnVisibilityChange: setColumnVisibility,
@@ -163,19 +178,10 @@ export function DataTable<TData, TValue>({
         <div className="flex items-center justify-between p-4 bg-white text-sm font-medium text-gray-600 border-t border-gray-100">
 
           <div className="text-gray-700">
-            Showing{" "}
-            {table.getFilteredRowModel().rows.length === 0
-              ? 0
-              : table.getState().pagination.pageIndex *
-                  table.getState().pagination.pageSize +
-                1}{" "}
-            -{" "}
-            {Math.min(
-              (table.getState().pagination.pageIndex + 1) *
-                table.getState().pagination.pageSize,
-              table.getFilteredRowModel().rows.length
-            )}{" "}
-            of {table.getFilteredRowModel().rows.length}
+            Showing {(page - 1) * pageSize + 1}
+            -
+            {Math.min(page * pageSize, totalUsers)}
+            of {totalUsers}
           </div>
 
           <div className="flex items-center gap-16 gap-6">
@@ -186,10 +192,11 @@ export function DataTable<TData, TValue>({
               </span>
 
               <Select
-                value={String(table.getState().pagination.pageSize)}
-                onValueChange={(value) =>
-                  table.setPageSize(Number(value))
-                }
+                value={String(pageSize)}
+                onValueChange={(value) => {
+                  setPageSize(Number(value))
+                  setPage(1)
+                }}
               >
                 <SelectTrigger className="h-8 w-[65px]">
                   <SelectValue />
@@ -212,10 +219,13 @@ export function DataTable<TData, TValue>({
                     href="#"
                     onClick={(e) => {
                       e.preventDefault()
-                      table.previousPage()
+
+                      if (page > 1) {
+                        setPage(page - 1)
+                      }
                     }}
                     className={
-                      !table.getCanPreviousPage()
+                      page === 1
                         ? "pointer-events-none opacity-50"
                         : ""
                     }
@@ -224,7 +234,7 @@ export function DataTable<TData, TValue>({
 
                 <PaginationItem>
                   <span className="px-3 text-sm font-medium">
-                    {table.getState().pagination.pageIndex + 1}
+                    {page}
                   </span>
                 </PaginationItem>
 
@@ -233,10 +243,13 @@ export function DataTable<TData, TValue>({
                     href="#"
                     onClick={(e) => {
                       e.preventDefault()
-                      table.nextPage()
+
+                      if (page < totalPages) {
+                        setPage(page + 1)
+                      }
                     }}
                     className={
-                      !table.getCanNextPage()
+                      page === totalPages
                         ? "pointer-events-none opacity-50"
                         : ""
                     }
