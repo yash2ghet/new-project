@@ -166,6 +166,12 @@ export default function UserManagementPage() {
             data={data}
             globalFilter={globalFilter}
             setGlobalFilter={setGlobalFilter}
+            page={1}
+            setPage={() => {}}
+            pageSize={5}
+            setPageSize={() => {}}
+            totalPages={1}
+            totalUsers={data.length}
           />
         )}
       </div>
